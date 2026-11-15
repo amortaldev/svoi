@@ -13,7 +13,7 @@ const seeds = [
   {id:'trash-2',category:'trash',title:'Стаканчики в зелёной зоне',description:'После выходных в сквере остался мусор. Небольшое дело, с которого можно начать.',address:'ул. Ленина, 10',lat:57.1556,lng:65.5305,likes:17,author:'Даша',comments:[]},
   {id:'pothole-2',category:'pothole',title:'Повреждён асфальт во дворе',description:'На въезде во двор разбито покрытие. Поддержите отметку, если тоже сталкиваетесь с этой проблемой.',address:'ул. Республики, 28',lat:57.1567,lng:65.5395,likes:12,author:'Илья',comments:[]}
 ];
-const freshState = () => ({version:1,xp:640,joined:false,eventComplete:false,teams:[],issues:seeds.map(item=>({...item,liked:false,resolved:false,comments:item.comments.map(c=>({...c}))})),reports:[]});
+const freshState = () => ({version:1,xp:640,joined:false,eventComplete:false,eventCardHidden:false,teams:[],issues:seeds.map(item=>({...item,liked:false,resolved:false,comments:item.comments.map(c=>({...c}))})),reports:[]});
 let state = freshState();
 let storageWarning = false;
 try {
@@ -56,7 +56,34 @@ function updateUI(){
   $('#join-event').innerHTML=state.eventComplete?`Дело сделано ${icon('check')}`:state.joined?`Я на месте — фотоотчёт ${icon('camera')}`:`Я с вами ${icon('arrow')}`;
   $('#event-footnote').textContent=state.eventComplete?'Спасибо! Набережная стала чище благодаря тебе':state.joined?'Встречаемся у Моста Влюблённых в 16:00':'Доброе дело подтвердим фотоотчётом';
   $('#event-dot').hidden=!state.joined||state.eventComplete;
+  updateEventCard();
   renderMarkers();
+}
+function updateMapLayout(){
+  const heroHeight=Math.ceil($('.hero').getBoundingClientRect().height);
+  $('.app').style.setProperty('--hero-height',`${heroHeight}px`);
+  const card=$('#home-event-card');
+  const visibleCard=card.hidden?$('#show-event-card'):card;
+  const bottom=parseFloat(getComputedStyle(visibleCard).bottom)||0;
+  const height=visibleCard.getBoundingClientRect().height;
+  $('.map-stage').style.setProperty('--map-action-bottom',`${bottom+height+16}px`);
+  map?.invalidateSize({pan:false});
+}
+function updateEventCard(){
+  const hidden=state.eventCardHidden===true;
+  $('#home-event-card').hidden=hidden;
+  $('#show-event-card').hidden=!hidden;
+  $('#show-event-card').setAttribute('aria-expanded',String(!hidden));
+  updateMapLayout();
+}
+function setEventCardHidden(hidden){
+  const previousHeight=(state.eventCardHidden===true?$('#show-event-card'):$('#home-event-card')).getBoundingClientRect().height;
+  state.eventCardHidden=hidden;
+  persist();
+  updateEventCard();
+  const nextHeight=(hidden?$('#show-event-card'):$('#home-event-card')).getBoundingClientRect().height;
+  map?.panBy([0,(nextHeight-previousHeight)/2],{animate:false});
+  (hidden?$('#show-event-card'):$('#hide-event-card')).focus({preventScroll:true});
 }
 function sheet(html,view='map'){
   lastFocus=document.activeElement;
@@ -103,7 +130,7 @@ function centerMap(){
   map.invalidateSize();
   const size=map.getSize();
   const top=mobile?110:155;
-  const cardHeight=$('.event-card').getBoundingClientRect().height;
+  const cardHeight=state.eventCardHidden===true?$('#show-event-card').getBoundingClientRect().height:$('.event-card').getBoundingClientRect().height;
   const bottom=mobile?cardHeight+110:cardHeight+50;
   const targetY=(top+Math.max(top+120,size.y-bottom))/2;
   const zoom=size.x<600?14:15;
@@ -298,6 +325,8 @@ $$('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 $$('[data-filter]').forEach(b=>b.onclick=()=>setFilter(b.dataset.filter));
 $('#add-issue').onclick=()=>showAdd();
 $('#join-event').onclick=joinEvent;
+$('#hide-event-card').onclick=()=>setEventCardHidden(true);
+$('#show-event-card').onclick=()=>setEventCardHidden(false);
 $('#search-button').onclick=showSearch;
 $('#city-button').onclick=()=>{centerMap();toast('Свои в Тюмени. Начинаем с нашего города ♡');};
 $('#zoom-in').onclick=()=>map?.zoomIn();
@@ -308,4 +337,8 @@ $('#locate').onclick=()=>{
   navigator.geolocation.getCurrentPosition(pos=>{const point=[pos.coords.latitude,pos.coords.longitude];if(point[0]<56.9||point[0]>57.4||point[1]<65.2||point[1]>65.9){centerMap();toast('Ты пока за пределами Тюмени. Показываем центр');return;}map?.setView(point,16);L.circleMarker(point,{radius:8,color:'white',fillColor:'#2388ff',fillOpacity:1,weight:3}).addTo(map);},()=>{centerMap();toast('Нет доступа к геолокации. Показываем центр Тюмени');},{timeout:8000,maximumAge:60000});
 };
 initMap();updateUI();
+const layoutObserver=new ResizeObserver(updateMapLayout);
+layoutObserver.observe($('.hero'));
+layoutObserver.observe($('#home-event-card'));
+layoutObserver.observe($('#show-event-card'));
 if(storageWarning)setTimeout(()=>toast('Не удалось прочитать сохранение. Открыта стартовая демка'),1000);
