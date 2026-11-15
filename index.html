@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fffaf6">
+  <meta name="description" content="Свои — карта добрых дел Тюмени. Находи проблемы, собирай команду и делай город лучше.">
+  <title>Свои — город делают свои</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/leaflet.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M17 4a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4v3"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-road" viewBox="0 0 24 24"><path d="M8 3 3 21M16 3l5 18M12 3v3m0 4v4m0 4v3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M8 5 10 2h4l2 3h4a2 2 0 0 1 2 2v13H2V7a2 2 0 0 1 2-2Z"/><circle cx="12" cy="12" r="4"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 3C9 1 2 6 4 14c2 7 16 6 16-11ZM7 19 17 8"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m8 4 8 8-8 8"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v7a5 5 0 0 1-10 0ZM7 5H3v4a4 4 0 0 0 5 4m9-8h4v4a4 4 0 0 1-5 4m-4 2v6m-5 0h10"/></symbol>
+  </defs></svg>
+  <div class="app">
+    <aside class="sidebar">
+      <header class="hero">
+        <div class="brand-row"><a class="wordmark" href="./" aria-label="Свои — главная">свои<span>↗</span></a><button class="city-button" id="city-button"><svg class="icon"><use href="#i-pin"/></svg>Тюмень <span class="chevron-down">⌄</span></button></div>
+        <div class="hero-title"><h1>Город делают<br><span>свои.</span></h1><button class="avatar avatar-self" data-view="profile" aria-label="Открыть профиль"></button></div>
+        <p class="hero-description">Твой город. Твоя команда. Твой вклад.</p>
+        <button class="team-link" data-view="team"><span class="avatar-stack"><span class="avatar avatar-one"></span><span class="avatar avatar-two"></span></span><span>Найти команду</span><svg class="icon"><use href="#i-arrow"/></svg></button>
+      </header>
+      <section class="sidebar-content">
+        <div class="section-heading"><h2>Маленькие дела.<br>Большие перемены.</h2><span class="hand-spark">✳</span></div>
+        <div class="impact-grid"><div><strong id="clean-count">14</strong><span>мест стали чище</span></div><div><strong>128</strong><span>своих в городе</span></div></div>
+        <div class="weekly-card"><div class="weekly-top"><span class="icon-box"><svg class="icon"><use href="#i-spark"/></svg></span><div><strong>Общая цель недели</strong><span>Сделаем чище 20 мест</span></div><b id="weekly-count">14/20</b></div><div class="progress-track"><div id="weekly-progress" style="width:70%"></div></div><small>Каждое доброе дело — шаг к цели.</small></div>
+        <button class="profile-strip" data-view="profile"><span class="avatar avatar-self"></span><span><strong>Саша <span class="level-label" id="sidebar-level">Уровень 7</span></strong><span id="sidebar-xp">640 / 800 XP</span><span class="mini-progress"><i id="mini-progress"></i></span></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+        <p class="sidebar-note">Хорошая компания для хороших дел <span>♡</span></p>
+      </section>
+    </aside>
+    <main class="map-stage" aria-label="Карта проблем Тюмени">
+      <div id="map"></div>
+      <div class="map-topbar"><div class="filter-group" role="group" aria-label="Категории проблем"><button class="filter active" data-filter="all">Все <span id="total-count">4</span></button><button class="filter" data-filter="trash"><svg class="icon"><use href="#i-trash"/></svg>Мусор</button><button class="filter" data-filter="pothole"><svg class="icon"><use href="#i-road"/></svg>Ямы</button><button class="filter" data-filter="resolved"><svg class="icon"><use href="#i-check"/></svg>Решено</button></div><button class="map-search" id="search-button" aria-label="Найти отметку"><svg class="icon"><use href="#i-search"/></svg><span>Что рядом?</span></button></div>
+      <div class="map-caption"><span class="live-dot"></span>Делаем Тюмень лучше <span class="caption-divider">/</span> <b id="map-count">4 отметки</b></div>
+      <div class="map-controls"><button class="round-control" id="zoom-in" aria-label="Приблизить карту">+</button><button class="round-control" id="zoom-out" aria-label="Отдалить карту">−</button><button class="round-control" id="locate" aria-label="Моё местоположение"><svg class="icon"><use href="#i-target"/></svg></button></div>
+      <button class="add-button" id="add-issue" aria-label="Добавить проблему"><svg class="icon"><use href="#i-plus"/></svg><span>Добавить отметку</span></button>
+      <div class="offline-note" id="offline-note" hidden>Схема Тюмени · для подробной карты нужен интернет</div>
+      <section class="event-card" aria-label="Ближайшее волонтёрское событие"><div class="event-top"><span class="coral-badge">СОБИРАЕМСЯ СЕГОДНЯ</span><span class="event-distance">350 м от тебя</span></div><h2>Сделаем набережную чище<span class="title-spark">✳</span></h2><div class="event-meta"><span><svg class="icon"><use href="#i-calendar"/></svg>16:00</span><span class="meta-dot">·</span><span><svg class="icon"><use href="#i-pin"/></svg>Набережная Туры</span></div><div class="event-social"><div class="volunteers"><span class="avatar-stack"><span class="avatar avatar-one"></span><span class="avatar avatar-two"></span><span class="avatar avatar-three"></span></span><span id="participant-label">Уже 12 своих</span></div><span class="xp-badge">+150 XP <svg class="icon"><use href="#i-spark"/></svg></span></div><button class="primary join-button" id="join-event">Я с вами <svg class="icon"><use href="#i-arrow"/></svg></button><div class="event-footnote"><svg class="icon"><use href="#i-camera"/></svg><span id="event-footnote">Доброе дело подтвердим фотоотчётом</span></div></section>
+    </main>
+    <nav class="bottom-nav" aria-label="Главная навигация"><button class="nav-item active" data-view="map"><svg class="icon"><use href="#i-pin"/></svg><span>Карта</span></button><button class="nav-item" data-view="events"><svg class="icon"><use href="#i-calendar"/></svg><span>События</span><i id="event-dot" hidden></i></button><button class="nav-item" data-view="team"><svg class="icon"><use href="#i-users"/></svg><span>Команда</span></button><button class="nav-item" data-view="leaderboard"><svg class="icon"><use href="#i-trophy"/></svg><span>Рейтинг</span></button><button class="nav-item" data-view="profile"><svg class="icon"><use href="#i-user"/></svg><span>Профиль</span></button></nav>
+  </div>
+  <dialog id="sheet" class="sheet"><div class="sheet-handle"></div><button id="close-sheet" class="close-button" aria-label="Закрыть"><svg class="icon"><use href="#i-close"/></svg></button><div id="sheet-content"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
