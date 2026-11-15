@@ -64,3 +64,37 @@
   .hero-title>.avatar{width:30px;height:30px;background-size:216.43px 384.56px;background-position:-174px -29px}
 }
 @media(max-height:760px) and (max-width:760px){.event-reopen{bottom:91px}}
+
+/* Keep map credits in a fixed, quiet footer instead of a floating label. */
+.map-stage .leaflet-bottom.leaflet-right{
+  left:0;
+  right:0;
+  bottom:env(safe-area-inset-bottom,0px);
+  width:100%;
+}
+.map-stage .leaflet-control-attribution{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  float:none;
+  width:100%;
+  max-width:none;
+  min-height:20px;
+  margin:0!important;
+  padding:2px 12px!important;
+  border-top:1px solid #e8e6e1;
+  background:#fffaf6f5!important;
+  box-shadow:none;
+  color:#737780;
+  font-size:10px!important;
+  line-height:16px;
+  white-space:nowrap;
+}
+.map-stage .leaflet-control-attribution a{color:#626a78;text-decoration:none}
+.map-stage .leaflet-control-attribution a:hover{text-decoration:underline}
+.map-stage .leaflet-attribution-flag{display:none}
+@media(max-width:760px){
+  .map-stage .leaflet-control-attribution{font-size:9px!important;padding:2px 10px!important}
+  .bottom-nav{bottom:calc(env(safe-area-inset-bottom,0px) + 24px)}
+}
